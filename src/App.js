@@ -1,24 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React,{useEffect, useState, useRef} from 'react'
+import * as THREE from 'three'
+import NET from 'vanta/dist/vanta.clouds.min'
+import Header from "./components/Header/Header";
+import './App.css'
+import AddToDo from "./components/AddToDo/AddToDo";
+import TodoList from './components/TodoList/TodoList'
 
 function App() {
+
+  const[todoName,setTodoName]=useState('');
+  const[todoArr,setTodoArr]=useState([]);
+  const[status,setStatus]=useState('all');
+  const [vantaEffect, setVantaEffect] = useState(0);
+    const myRef = useRef(null);
+    useEffect(() => {
+        if (!vantaEffect) {
+            setVantaEffect(NET({
+                el: myRef.current,
+                THREE: THREE,
+                maxDistance: 22.00,
+                points: 20.00,
+            }))
+        }
+        return () => {
+            if (vantaEffect) vantaEffect.destroy()
+        }
+    }, [vantaEffect]);
+  
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <>
+    <div className="vanta" ref={myRef}></div>
+    <div className="content">
+   
+         <Header/>
+        <AddToDo todoName={todoName} setTodoName={setTodoName} status={status} setStatus={setStatus} todoArr={todoArr} setTodoArr={setTodoArr}/>
+        <TodoList todoName={todoName} setTodoName={setTodoName} todoArr={todoArr} setTodoArr={setTodoArr} status={status} setStatus={setStatus} />
+   
+   
     </div>
+    
+       
+     
+      
+    </>
+    
+       
   );
 }
 
